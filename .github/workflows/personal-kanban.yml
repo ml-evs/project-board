@@ -1,25 +1,32 @@
 name: Update GitHub Project with my assigned issues & PRs
 
 on:
-  issues:
-    types: [assigned]
-  pull_request:
-    types: [assigned]
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight
+  workflow_dispatch:      # Allow manual triggers
 
 jobs:
-  add-to-project:
+  sync-issues:
     runs-on: ubuntu-latest
     steps:
-      - name: Add item to project
+      - name: Sync assigned issues to project
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-          PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER }}
-          ORG: ${{ secrets.OWNER }}
+          GITHUB_TOKEN: ${{ secrets.GH_CLASSIC_TOKEN }}
+          PROJECT_NUMBER: "1"
+          USERNAME: ${{ github.actor }}
         run: |
-          # Use PR URL if it's a PR event, otherwise use issue URL
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            URL="${{ github.event.pull_request.html_url }}"
-          else
-            URL="${{ github.event.issue.html_url }}"
-          fi
-          gh project item-add "$PROJECT_NUMBER" --owner "$ORG" --url "$URL"
+          # Get the last week's worth of issues
+          week_ago=$(date -d "1 week ago" +%Y-%m-%d)
+
+          # Get recently created OR assigned issues/PRs
+          gh search issues \
+            --include-prs \
+            --assigned @me \
+            --state open \
+            --updated ">=$week_ago" \
+            --json url \
+          | jq -r '.[].url' \
+          | while read -r url; do
+            echo "Adding issue/PR $url to project"
+            gh project item-add "$PROJECT_NUMBER" --owner "$USERNAME" --url "$url" || true
+          done
