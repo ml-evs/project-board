@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Sync assigned issues to project
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_CLASSIC_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_CLASSIC_TOKEN }}
           PROJECT_NUMBER: "1"
           USERNAME: ${{ github.actor }}
         run: |
