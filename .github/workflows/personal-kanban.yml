@@ -21,7 +21,7 @@ jobs:
           # Get recently created OR assigned issues/PRs
           gh search issues \
             --include-prs \
-            --assigned @me \
+            --assignee @me \
             --state open \
             --updated ">=$week_ago" \
             --json url \
