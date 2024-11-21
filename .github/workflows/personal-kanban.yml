@@ -16,7 +16,7 @@ jobs:
           USERNAME: ${{ github.actor }}
         run: |
           # Get the last week's worth of issues
-          week_ago=$(date -d "1 week ago" +%Y-%m-%d)
+          week_ago=$(date -d "1 day ago" +%Y-%m-%d)
 
           # Get recently created OR assigned issues/PRs
           gh search issues \

@@ -8,3 +8,6 @@ The items are added with "No status" as setting a status requires some overkill
 usage of the GraphQL API.
 
 You should just need to set the right permissions on a "classic" GH token and get the correct project number to write to (note: this is mutable if you delete other projects).
+
+This needs to run on a schedule, and it will loop over the last day's worth of
+issues to add them to the board.
